@@ -1,9 +1,10 @@
 package golevelui
 
 import (
+	"net/http"
+
 	"github.com/siddontang/go/hack"
 	"github.com/syndtr/goleveldb/leveldb"
-	"net/http"
 )
 
 type keyInfoRes struct {

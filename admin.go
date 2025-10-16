@@ -3,12 +3,13 @@ package golevelui
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/syndtr/goleveldb/leveldb"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"sync"
+
+	"github.com/syndtr/goleveldb/leveldb"
 )
 
 const apiTestUrl = "/golevelui/test"
@@ -74,7 +75,9 @@ func (l *LevelAdmin) loadEnv() {
 }
 
 func (l *LevelAdmin) apiHelloWord(writer http.ResponseWriter, request *http.Request) {
-	writer.Write([]byte("hello world"))
+	if _, err := writer.Write([]byte("hello world")); err != nil {
+		l.logInfo(fmt.Sprintf("failed to write response: %v", err))
+	}
 }
 
 func (l *LevelAdmin) initServerMux() error {
@@ -132,8 +135,9 @@ func (l *LevelAdmin) Start() error {
 
 func (l *LevelAdmin) writeError(writer http.ResponseWriter, err error) {
 	writer.Header().Add("Content-Type", "application/json")
-
-	_, _ = writer.Write([]byte(fmt.Sprintf("{\"error:\" %s}", err.Error())))
+	if _, writeErr := fmt.Fprintf(writer, `{"error": "%s"}`, err.Error()); writeErr != nil {
+		l.logInfo(fmt.Sprintf("failed to write error response: %v", writeErr))
+	}
 }
 
 func (l *LevelAdmin) writeJson(writer http.ResponseWriter, v interface{}) {
@@ -153,8 +157,3 @@ func (l *LevelAdmin) logInfo(str string) {
 	}
 }
 
-func (l *LevelAdmin) logInfoWithFunc(c func()) {
-	if l.debug {
-		c()
-	}
-}

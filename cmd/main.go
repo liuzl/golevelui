@@ -3,18 +3,16 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/liuzl/golevelui"
 	"github.com/syndtr/goleveldb/leveldb"
-	"os"
 )
 
 func fileExists(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {
-		if os.IsNotExist(err) {
-			return true
-		}
-		return false
+		return os.IsNotExist(err)
 	}
 	return true
 }
@@ -45,7 +43,9 @@ func main() {
 
 	defer func() {
 		for _, file := range files {
-			file.Close()
+			if err := file.Close(); err != nil {
+				fmt.Printf("failed to close db: %v\n", err)
+			}
 		}
 	}()
 

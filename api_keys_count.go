@@ -1,11 +1,12 @@
 package golevelui
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/siddontang/go/hack"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
-	"net/http"
-	"time"
 )
 
 type apiKeysCountRes struct {

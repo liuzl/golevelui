@@ -2,9 +2,10 @@ package golevelui
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/siddontang/go/hack"
 	"github.com/syndtr/goleveldb/leveldb"
-	"net/http"
 )
 
 type deleteRes struct {
@@ -33,7 +34,10 @@ func (l *LevelAdmin) apiKeyDelete(writer http.ResponseWriter, request *http.Requ
 	if load, ok := l.dbs.Load(reqData.DB); ok {
 		db := load.(*leveldb.DB)
 		if has, err := db.Has(hack.Slice(reqData.Key), nil); has && err == nil {
-			db.Delete(hack.Slice(reqData.Key), nil)
+			if err := db.Delete(hack.Slice(reqData.Key), nil); err != nil {
+				l.writeError(writer, err)
+				return
+			}
 		} else {
 			http.NotFound(writer, request)
 			return

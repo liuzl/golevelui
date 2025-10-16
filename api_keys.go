@@ -1,11 +1,12 @@
 package golevelui
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/siddontang/go/hack"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
-	"net/http"
-	"strconv"
 )
 
 type keyListRes struct {

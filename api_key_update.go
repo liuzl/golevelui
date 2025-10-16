@@ -2,9 +2,10 @@ package golevelui
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/siddontang/go/hack"
 	"github.com/syndtr/goleveldb/leveldb"
-	"net/http"
 )
 
 type updateRes struct {

@@ -1,0 +1,16 @@
+version: 2
+
+run:
+  linters:
+    disable-all: true
+    enable:
+      - govet
+      - errcheck
+      - staticcheck
+      - unused
+      - gofmt
+      - gocyclo
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
