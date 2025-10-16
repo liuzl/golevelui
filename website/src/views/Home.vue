@@ -29,11 +29,12 @@ import KeyList from '@/components/KeyList.vue'
 import { dbs } from '@/api/golevelui'
 import { Tabs, TabPane } from 'element-ui'
 
+Vue.use(Tabs)
+Vue.use(TabPane)
+
 @Component({
   components: {
     KeyList,
-    ElTabs: Tabs,
-    ElTabPane: TabPane,
   },
 })
 export default class Home extends Vue {
@@ -42,7 +43,7 @@ export default class Home extends Vue {
   private tabsOffsetTop = 0
 
   mounted() {
-    this.$nextTick(function () {
+    this.$nextTick(() => {
       this.tabsOffsetTop = (
         (this.$refs.tabs as Vue).$el as HTMLElement
       ).offsetTop
@@ -58,7 +59,7 @@ export default class Home extends Vue {
     })
   }
   handleClick() {
-    console.log('todo')
+    // todo
   }
 }
 </script>

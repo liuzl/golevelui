@@ -166,24 +166,24 @@ import {
 } from 'element-ui'
 import { keys, keyInfo, keyDelete, keyUpdate, keysCount } from '@/api/golevelui'
 
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Input)
+Vue.use(Row)
+Vue.use(Col)
+Vue.use(Button)
+Vue.use(Select)
+Vue.use(Option)
+Vue.use(Tag)
+Vue.use(Card)
+Vue.use(Drawer)
+
 interface Item {
   keyName: string
 }
 
 @Component({
-  components: {
-    ElTable: Table,
-    ElTableColumn: TableColumn,
-    ElInput: Input,
-    ElRow: Row,
-    ElCol: Col,
-    ElButton: Button,
-    ElSelect: Select,
-    ElOption: Option,
-    ElTag: Tag,
-    ElCard: Card,
-    ElDrawer: Drawer,
-  },
+  components: {},
 })
 export default class List extends Vue {
   @Prop({ default: '' })
