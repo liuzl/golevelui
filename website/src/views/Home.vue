@@ -1,16 +1,11 @@
 <template>
-  <el-container class="home">
-    <el-header>
-    LevelDB Web Admin
-    </el-header>
-    <el-main class="main">
-      <el-tabs v-model="showTab" @tab-click="handleClick" tab-position="left" ref="tabs">
-        <el-tab-pane v-for="(db, index) in dbs" :key="index" :label="db" :name="db">
-          <key-list :db.sync="db" :offset-top.sync="tabsOffsetTop"></key-list>
-        </el-tab-pane>
-      </el-tabs>
-    </el-main>
-  </el-container>
+  <div class="home">
+    <el-tabs v-model="showTab" @tab-click="handleClick" tab-position="left" ref="tabs" class="db-tabs">
+      <el-tab-pane v-for="(db, index) in dbs" :key="index" :label="db" :name="db">
+        <key-list v-if="showTab === db" :db.sync="db" :offset-top.sync="tabsOffsetTop"></key-list>
+      </el-tab-pane>
+    </el-tabs>
+  </div>
 </template>
 
 <script lang="ts">
@@ -24,16 +19,11 @@
       KeyList,
       ElTabs: Tabs,
       ElTabPane: TabPane,
-      ElHeader: Header,
-      ElMain: Main,
-      ElContainer: Container,
     }
   })
   export default class Home extends Vue {
     private showTab = ''
-
     private dbs: Array<string> = []
-
     private tabsOffsetTop = 0
 
     mounted() {
@@ -57,13 +47,18 @@
 </script>
 
 <style scoped>
-  .el-header {
-    background-color: #d8e4e4;
-    color: #333;
-    line-height: 60px;
-    margin-bottom: 5px;
-  }
-  .el-main {
-    padding-top: 20px;
-  }
+.home {
+  padding: 20px;
+  height: calc(100vh - 40px);
+  box-sizing: border-box;
+}
+.db-tabs {
+  height: 100%;
+}
+::v-deep .el-tabs__content {
+  height: 100%;
+}
+::v-deep .el-tab-pane {
+  height: 100%;
+}
 </style>
