@@ -1,13 +1,22 @@
 package golevelui
 
 import (
-	"github.com/GeertJohan/go.rice"
+	"embed"
+	"io/fs"
 	"net/http"
 )
 
-//must be run `go get github.com/GeertJohan/go.rice/rice` first
-//go:generate rice embed-go
+//go:embed all:static
+var embeddedFS embed.FS
 
-func (l *LevelAdmin) startStatic(prefix string) {
-	l.mux.Handle(prefix, http.StripPrefix(prefix, http.FileServer(rice.MustFindBox("static").HTTPBox())))
+// getStaticFS returns a filesystem (http.FileSystem) for the embedded static assets.
+// It creates a sub-filesystem rooted at the "static" directory, which allows the
+// http.FileServer to serve files correctly.
+func getStaticFS() http.FileSystem {
+	subFS, err := fs.Sub(embeddedFS, "static")
+	if err != nil {
+		// This should not happen with a correctly embedded directory
+		panic(err)
+	}
+	return http.FS(subFS)
 }

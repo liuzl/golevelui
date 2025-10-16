@@ -115,7 +115,7 @@ func (l *LevelAdmin) Start() error {
 		return err
 	}
 
-	l.startStatic(staticPrefix)
+	l.mux.Handle(staticPrefix, http.StripPrefix(staticPrefix, http.FileServer(getStaticFS())))
 
 	l.mux.HandleFunc(apiTestUrl, l.apiHelloWord)
 	l.mux.HandleFunc(apiDbs, l.apiDBs)
