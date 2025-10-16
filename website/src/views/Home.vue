@@ -1,49 +1,66 @@
 <template>
   <div class="home">
-    <el-tabs v-model="showTab" @tab-click="handleClick" tab-position="left" ref="tabs" class="db-tabs">
-      <el-tab-pane v-for="(db, index) in dbs" :key="index" :label="db" :name="db">
-        <key-list v-if="showTab === db" :db.sync="db" :offset-top.sync="tabsOffsetTop"></key-list>
+    <el-tabs
+      v-model="showTab"
+      @tab-click="handleClick"
+      tab-position="left"
+      ref="tabs"
+      class="db-tabs"
+    >
+      <el-tab-pane
+        v-for="(db, index) in dbs"
+        :key="index"
+        :label="db"
+        :name="db"
+      >
+        <key-list
+          v-if="showTab === db"
+          :db="db"
+          :offset-top.sync="tabsOffsetTop"
+        ></key-list>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script lang="ts">
-  import { Component, Vue } from "vue-property-decorator"
-  import KeyList from "@/components/KeyList.vue"
-  import {dbs} from "@/api/golevelui"
-  import { Tabs, TabPane, Header, Main, Container } from "element-ui"
+import { Component, Vue } from 'vue-property-decorator'
+import KeyList from '@/components/KeyList.vue'
+import { dbs } from '@/api/golevelui'
+import { Tabs, TabPane } from 'element-ui'
 
-  @Component({
-    components: {
-      KeyList,
-      ElTabs: Tabs,
-      ElTabPane: TabPane,
-    }
-  })
-  export default class Home extends Vue {
-    private showTab = ''
-    private dbs: Array<string> = []
-    private tabsOffsetTop = 0
+@Component({
+  components: {
+    KeyList,
+    ElTabs: Tabs,
+    ElTabPane: TabPane,
+  },
+})
+export default class Home extends Vue {
+  private showTab = ''
+  private dbs: Array<string> = []
+  private tabsOffsetTop = 0
 
-    mounted() {
-      this.$nextTick(function () {
-        this.tabsOffsetTop = ((this.$refs.tabs as Vue).$el as HTMLElement).offsetTop
-      })
-    }
-
-    created() {
-      dbs().then(res => {
-        this.dbs = res.data
-        if (res.data.length) {
-          this.showTab = res.data[0]
-        }
-      })
-    }
-    handleClick() {
-      console.log("todo")
-    }
+  mounted() {
+    this.$nextTick(function () {
+      this.tabsOffsetTop = (
+        (this.$refs.tabs as Vue).$el as HTMLElement
+      ).offsetTop
+    })
   }
+
+  created() {
+    dbs().then((res) => {
+      this.dbs = res.data
+      if (res.data.length) {
+        this.showTab = res.data[0]
+      }
+    })
+  }
+  handleClick() {
+    console.log('todo')
+  }
+}
 </script>
 
 <style scoped>

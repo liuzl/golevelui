@@ -1,24 +1,31 @@
-# website
+# GoLevelUI Frontend
 
-## Project setup
-```
-yarn install
-```
+This directory contains the Vue.js frontend application for GoLevelUI.
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+### Project Setup
 
-### Compiles and minifies for production
+Install the dependencies:
 ```
-yarn build
+npm install
 ```
 
-### Lints and fixes files
+### Development Server
+
+Compiles and hot-reloads for development:
 ```
-yarn lint
+npm run serve
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Production Build
+
+Compiles and minifies for production. The output is automatically placed in the root `/static` directory, ready to be embedded by the Go backend.
+```
+npm run build
+```
+
+### Lint and Format
+
+Lints and fixes files according to the project's ESLint and Prettier configuration.
+```
+npm run lint
+```

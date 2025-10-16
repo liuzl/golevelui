@@ -11,7 +11,8 @@
               style="float: right; padding: 3px 0"
               type="text"
               icon="el-icon-plus"
-            >New Key</el-button>
+              >New Key</el-button
+            >
           </div>
           <el-input
             placeholder="Filter by prefix"
@@ -49,8 +50,11 @@
               size="mini"
               icon="el-icon-arrow-down"
               @click="next"
-            >Load More</el-button>
-            <el-tag size="mini" :type="countType" @click="loadCounts">Total: {{ count }}</el-tag>
+              >Load More</el-button
+            >
+            <el-tag size="mini" :type="countType" @click="loadCounts"
+              >Total: {{ count }}</el-tag
+            >
           </div>
         </el-card>
       </el-col>
@@ -66,10 +70,16 @@
               style="float: right; padding: 3px 0"
               type="text"
               icon="el-icon-check"
-            >Save</el-button>
+              >Save</el-button
+            >
           </div>
           <div class="editor-toolbar">
-             <el-select v-model="format" placeholder="Format" size="mini" clearable>
+            <el-select
+              v-model="format"
+              placeholder="Format"
+              size="mini"
+              clearable
+            >
               <el-option
                 v-for="item in options"
                 :key="item.value"
@@ -100,16 +110,22 @@
       <el-card class="box-card value-editor-drawer">
         <div slot="header" class="clearfix">
           <span>Value</span>
-           <el-button
+          <el-button
             v-if="currentKey"
             @click="handleUpdate"
             style="float: right; padding: 3px 0"
             type="text"
             icon="el-icon-check"
-          >Save</el-button>
+            >Save</el-button
+          >
         </div>
         <div class="editor-toolbar">
-           <el-select v-model="format" placeholder="Format" size="mini" clearable>
+          <el-select
+            v-model="format"
+            placeholder="Format"
+            size="mini"
+            clearable
+          >
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -132,7 +148,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import {
   Table,
   TableColumn,
@@ -146,12 +162,12 @@ import {
   Tag,
   MessageBox,
   Card,
-  Drawer
-} from "element-ui";
-import { keys, keyInfo, keyDelete, keyUpdate, keysCount } from "@/api/golevelui";
+  Drawer,
+} from 'element-ui'
+import { keys, keyInfo, keyDelete, keyUpdate, keysCount } from '@/api/golevelui'
 
 interface Item {
-  keyName: string;
+  keyName: string
 }
 
 @Component({
@@ -166,225 +182,233 @@ interface Item {
     ElOption: Option,
     ElTag: Tag,
     ElCard: Card,
-    ElDrawer: Drawer
-  }
+    ElDrawer: Drawer,
+  },
 })
 export default class List extends Vue {
-  @Prop({ default: "" })
-  private db!: string;
+  @Prop({ default: '' })
+  private db!: string
 
-  private data: Item[] = [];
-  private prefix = "";
-  private tableHeight = 400;
-  private currentValue = "";
-  private currentKey = "";
-  private format = "";
-  private searchText = "";
-  private countSearchText = "";
-  private countType = "success";
-  private count = 0;
-  private countIsTrue = false;
-  private countLock = false;
-  
-  private isMobile = false;
-  private drawerVisible = false;
+  private data: Item[] = []
+  private prefix = ''
+  private tableHeight = 400
+  private currentValue = ''
+  private currentKey = ''
+  private format = ''
+  private searchText = ''
+  private countSearchText = ''
+  private countType = 'success'
+  private count = 0
+  private countIsTrue = false
+  private countLock = false
 
-  private options = [{
-    label: "Json",
-    value: "Json"
-  }];
+  private isMobile = false
+  private drawerVisible = false
+
+  private options = [
+    {
+      label: 'Json',
+      value: 'Json',
+    },
+  ]
 
   get editorRows() {
     // Adjust editor height based on viewport
-    return Math.floor((window.innerHeight - 280) / 21);
+    return Math.floor((window.innerHeight - 280) / 21)
   }
 
   // --- Lifecycle & Resize ---
   mounted() {
-    this.handleResize();
-    window.addEventListener("resize", this.handleResize);
+    this.handleResize()
+    window.addEventListener('resize', this.handleResize)
     this.$nextTick(() => {
-      this.tableHeight = (this.$el as HTMLElement).clientHeight - 160;
-    });
+      this.tableHeight = (this.$el as HTMLElement).clientHeight - 160
+    })
   }
 
   beforeDestroy() {
-    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener('resize', this.handleResize)
   }
 
   handleResize() {
-    this.isMobile = window.innerWidth < 768; // Element UI's sm breakpoint
-    this.tableHeight = (this.$el as HTMLElement).clientHeight - 160;
+    this.isMobile = window.innerWidth < 768 // Element UI's sm breakpoint
+    this.tableHeight = (this.$el as HTMLElement).clientHeight - 160
   }
 
   // --- Data Loading ---
   created() {
-    this.loadKeys();
-    this.loadCounts();
+    this.loadKeys()
+    this.loadCounts()
   }
 
   loadKeys() {
-    if (!this.db) return;
+    if (!this.db) return
     keys({
       db: this.db,
       prefix: this.prefix,
-      searchText: this.searchText
-    }).then(res => {
-      this.searchText = res.data.IsPart ? res.data.SearchText : "";
-      const newItems = res.data.Items.map((item: string) => ({ keyName: item }));
-      this.data = this.data.concat(newItems);
-    });
+      searchText: this.searchText,
+    }).then((res) => {
+      this.searchText = res.data.IsPart ? res.data.SearchText : ''
+      const newItems = res.data.Items.map((item: string) => ({ keyName: item }))
+      this.data = this.data.concat(newItems)
+    })
   }
 
   loadCounts() {
-    if (this.countLock || this.countIsTrue || !this.db) return;
-    this.countLock = true;
+    if (this.countLock || this.countIsTrue || !this.db) return
+    this.countLock = true
     keysCount({
       db: this.db,
       prefix: this.prefix,
-      searchText: this.countSearchText
+      searchText: this.countSearchText,
     })
-      .then(res => {
-        this.countSearchText = res.data.LastKey;
-        this.count += res.data.Count;
-        this.countType = res.data.IsTrue ? "success" : "warning";
-        this.countIsTrue = res.data.IsTrue;
+      .then((res) => {
+        this.countSearchText = res.data.LastKey
+        this.count += res.data.Count
+        this.countType = res.data.IsTrue ? 'success' : 'warning'
+        this.countIsTrue = res.data.IsTrue
       })
       .finally(() => {
-        this.countLock = false;
-      });
+        this.countLock = false
+      })
   }
 
   next() {
-    this.loadKeys();
+    this.loadKeys()
   }
 
-  @Watch("prefix")
+  @Watch('prefix')
   onPrefixChange() {
-    this.data = [];
-    this.searchText = "";
-    this.count = 0;
-    this.countSearchText = "";
-    this.countIsTrue = false;
-    this.loadKeys();
-    this.loadCounts();
+    this.data = []
+    this.searchText = ''
+    this.count = 0
+    this.countSearchText = ''
+    this.countIsTrue = false
+    this.loadKeys()
+    this.loadCounts()
   }
 
   // --- Item Interaction ---
   handleItemClick(row: Item, isNew = false) {
-    if (!this.db) return Message.error("Invalid DB name");
-    this.currentKey = row.keyName;
+    if (!this.db) return Message.error('Invalid DB name')
+    this.currentKey = row.keyName
 
     if (this.isMobile) {
-      this.drawerVisible = true;
+      this.drawerVisible = true
     }
 
     if (isNew) {
-      this.currentValue = "";
-      Message.info("Enter a value and click 'Save' to create the new key.");
-      return;
+      this.currentValue = ''
+      Message.info("Enter a value and click 'Save' to create the new key.")
+      return
     }
 
-    keyInfo({ db: this.db, key: row.keyName }).then(res => {
-      let formatValue = res.data.value;
-      if (this.format === "Json") {
-        formatValue = this.formatValueToJson(res.data.value);
+    keyInfo({ db: this.db, key: row.keyName }).then((res) => {
+      let formatValue = res.data.value
+      if (this.format === 'Json') {
+        formatValue = this.formatValueToJson(res.data.value)
       }
-      this.currentValue = formatValue;
-    });
+      this.currentValue = formatValue
+    })
   }
 
   handleNew() {
-    MessageBox.prompt("Please enter the new key", "New Key", {
-      confirmButtonText: "OK",
-      cancelButtonText: "Cancel"
+    MessageBox.prompt('Please enter the new key', 'New Key', {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
     })
-      .then(({ value }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .then((data: any) => {
+        const value = data.value as string
         if (value) {
-          const newKey = { keyName: value };
-          this.data.unshift(newKey);
-          this.count++;
-          this.handleItemClick(newKey, true);
+          const newKey = { keyName: value }
+          this.data.unshift(newKey)
+          this.count++
+          this.handleItemClick(newKey, true)
         }
       })
       .catch(() => {
-        Message.info("Canceled");
-      });
+        Message.info('Canceled')
+      })
   }
 
   handleUpdate() {
-    if (!this.currentKey) return Message.info("Please select a key");
-    
-    let valueToSave = this.currentValue;
+    if (!this.currentKey) return Message.info('Please select a key')
+
+    let valueToSave = this.currentValue
     if (this.format === 'Json') {
-        valueToSave = this.formatJsonToValue(this.currentValue);
+      valueToSave = this.formatJsonToValue(this.currentValue)
     }
 
     keyUpdate({ db: this.db, key: this.currentKey, value: valueToSave })
-      .then(res => {
+      .then((res) => {
         if (res.data.Success) {
-          Message.success("Update successful!");
+          Message.success('Update successful!')
           if (this.isMobile) {
-            this.drawerVisible = false;
+            this.drawerVisible = false
           }
         } else {
-          Message.error("Update failed!");
+          Message.error('Update failed!')
         }
       })
-      .catch(err => {
-        Message.error(`Update failed: ${err}`);
-      });
+      .catch((err) => {
+        Message.error(`Update failed: ${err}`)
+      })
   }
 
   handleDelete(row: Item) {
-    MessageBox.confirm("This will permanently delete the key. Continue?", "Warning", {
-      confirmButtonText: "OK",
-      cancelButtonText: "Cancel",
-      type: "warning"
-    })
+    MessageBox.confirm(
+      'This will permanently delete the key. Continue?',
+      'Warning',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }
+    )
       .then(() => {
-        keyDelete({ db: this.db, key: row.keyName }).then(res => {
+        keyDelete({ db: this.db, key: row.keyName }).then((res) => {
           if (res.data.Success) {
-            Message.success("Delete successful!");
-            this.data.splice(this.data.indexOf(row), 1);
-            this.count--;
+            Message.success('Delete successful!')
+            this.data.splice(this.data.indexOf(row), 1)
+            this.count--
             if (this.currentKey === row.keyName) {
-                this.currentKey = "";
-                this.currentValue = "";
+              this.currentKey = ''
+              this.currentValue = ''
             }
           } else {
-            Message.error("Delete failed!");
+            Message.error('Delete failed!')
           }
-        });
+        })
       })
       .catch(() => {
-        Message.info("Delete canceled");
-      });
+        Message.info('Delete canceled')
+      })
   }
 
   // --- Formatting ---
-  @Watch("format")
+  @Watch('format')
   formatChange(now: string, old: string) {
-    if (now === "Json") {
-      this.currentValue = this.formatValueToJson(this.currentValue);
-    } else if (old === "Json") {
-      this.currentValue = this.formatJsonToValue(this.currentValue);
+    if (now === 'Json') {
+      this.currentValue = this.formatValueToJson(this.currentValue)
+    } else if (old === 'Json') {
+      this.currentValue = this.formatJsonToValue(this.currentValue)
     }
   }
 
   formatValueToJson(value: string): string {
     try {
-      return JSON.stringify(JSON.parse(value), null, 2);
+      return JSON.stringify(JSON.parse(value), null, 2)
     } catch (e) {
-      return value;
+      return value
     }
   }
 
   formatJsonToValue(json: string): string {
     try {
-      return JSON.stringify(JSON.parse(json));
+      return JSON.stringify(JSON.parse(json))
     } catch (e) {
-      return json;
+      return json
     }
   }
 }
@@ -394,7 +418,8 @@ export default class List extends Vue {
 .key-list-container {
   height: 100%;
 }
-.el-row, .el-col {
+.el-row,
+.el-col {
   height: 100%;
 }
 .box-card {
@@ -444,7 +469,7 @@ export default class List extends Vue {
   border-radius: 0;
 }
 .value-editor-drawer {
-    height: 100vh;
+  height: 100vh;
 }
 ::v-deep .el-table__body tr.current-row > td {
   background-color: #ecf5ff !important;
