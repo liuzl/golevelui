@@ -31,7 +31,7 @@
             @row-click="(row) => handleItemClick(row, false)"
           >
             <el-table-column prop="keyName" label="Key"></el-table-column>
-            <el-table-column width="60" fixed="right" label="Actions">
+            <el-table-column width="60" fixed="right">
               <template slot-scope="scope">
                 <el-button
                   @click.stop="handleDelete(scope.row)"
