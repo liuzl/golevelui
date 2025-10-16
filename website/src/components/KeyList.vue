@@ -7,27 +7,27 @@
           <div slot="header" class="clearfix">
             <span>Keys</span>
             <el-button
-              @click="handleNew"
               style="float: right; padding: 3px 0"
               type="text"
               icon="el-icon-plus"
+              @click="handleNew"
               >New Key</el-button
             >
           </div>
           <el-input
-            placeholder="Filter by prefix"
             v-model="prefix"
+            placeholder="Filter by prefix"
             class="filter-input"
             clearable
           >
             <i slot="prefix" class="el-input__icon el-icon-search"></i>
           </el-input>
           <el-table
+            ref="table"
             highlight-current-row
             :data="data"
             class="list-table"
             :border="false"
-            ref="table"
             :height="tableHeight"
             @row-click="(row) => handleItemClick(row, false)"
           >
@@ -35,11 +35,11 @@
             <el-table-column width="60" fixed="right">
               <template slot-scope="scope">
                 <el-button
-                  @click.stop="handleDelete(scope.row)"
                   size="mini"
                   type="danger"
                   icon="el-icon-delete"
                   circle
+                  @click.stop="handleDelete(scope.row)"
                 ></el-button>
               </template>
             </el-table-column>
@@ -66,10 +66,10 @@
             <span>Value</span>
             <el-button
               v-if="currentKey"
-              @click="handleUpdate"
               style="float: right; padding: 3px 0"
               type="text"
               icon="el-icon-check"
+              @click="handleUpdate"
               >Save</el-button
             >
           </div>
@@ -89,11 +89,11 @@
             </el-select>
           </div>
           <el-input
+            v-model="currentValue"
             :rows="editorRows"
             type="textarea"
             resize="none"
             placeholder="Select a key to view its value"
-            v-model="currentValue"
             class="value-textarea"
           ></el-input>
         </el-card>
@@ -112,10 +112,10 @@
           <span>Value</span>
           <el-button
             v-if="currentKey"
-            @click="handleUpdate"
             style="float: right; padding: 3px 0"
             type="text"
             icon="el-icon-check"
+            @click="handleUpdate"
             >Save</el-button
           >
         </div>
@@ -135,11 +135,11 @@
           </el-select>
         </div>
         <el-input
+          v-model="currentValue"
           :rows="editorRows"
           type="textarea"
           resize="none"
           placeholder="Select a key to view its value"
-          v-model="currentValue"
           class="value-textarea"
         ></el-input>
       </el-card>
@@ -149,6 +149,22 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+
+// Simple debounce utility function
+function debounce<T extends (...args: unknown[]) => unknown>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: ReturnType<typeof setTimeout>
+  return function executedFunction(...args: Parameters<T>) {
+    const later = () => {
+      clearTimeout(timeout)
+      func(...args)
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
+  }
+}
 import {
   Table,
   TableColumn,
@@ -217,17 +233,19 @@ export default class List extends Vue {
     return Math.floor((window.innerHeight - 280) / 21)
   }
 
+  private debouncedHandleResize = debounce(this.handleResize.bind(this), 200)
+
   // --- Lifecycle & Resize ---
   mounted() {
     this.handleResize()
-    window.addEventListener('resize', this.handleResize)
+    window.addEventListener('resize', this.debouncedHandleResize)
     this.$nextTick(() => {
       this.tableHeight = (this.$el as HTMLElement).clientHeight - 160
     })
   }
 
   beforeDestroy() {
-    window.removeEventListener('resize', this.handleResize)
+    window.removeEventListener('resize', this.debouncedHandleResize)
   }
 
   handleResize() {
@@ -247,11 +265,18 @@ export default class List extends Vue {
       db: this.db,
       prefix: this.prefix,
       searchText: this.searchText,
-    }).then((res) => {
-      this.searchText = res.data.IsPart ? res.data.SearchText : ''
-      const newItems = res.data.Items.map((item: string) => ({ keyName: item }))
-      this.data = this.data.concat(newItems)
     })
+      .then((res) => {
+        this.searchText = res.data.IsPart ? res.data.SearchText : ''
+        const newItems = res.data.Items.map((item: string) => ({
+          keyName: item,
+        }))
+        this.data = this.data.concat(newItems)
+      })
+      .catch((error) => {
+        console.error('Failed to load keys:', error)
+        Message.error('Failed to load keys. Please try again.')
+      })
   }
 
   loadCounts() {
@@ -267,6 +292,10 @@ export default class List extends Vue {
         this.count += res.data.Count
         this.countType = res.data.IsTrue ? 'success' : 'warning'
         this.countIsTrue = res.data.IsTrue
+      })
+      .catch((error) => {
+        console.error('Failed to load counts:', error)
+        this.countType = 'danger'
       })
       .finally(() => {
         this.countLock = false
@@ -317,9 +346,8 @@ export default class List extends Vue {
       confirmButtonText: 'OK',
       cancelButtonText: 'Cancel',
     })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((data: any) => {
-        const value = data.value as string
+        const value = data.value
         if (value) {
           const newKey = { keyName: value }
           this.data.unshift(newKey)

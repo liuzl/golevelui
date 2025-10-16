@@ -1,11 +1,11 @@
 <template>
   <div class="home">
     <el-tabs
-      v-model="showTab"
-      @tab-click="handleClick"
-      tab-position="left"
       ref="tabs"
+      v-model="showTab"
+      tab-position="left"
       class="db-tabs"
+      @tab-click="handleClick"
     >
       <el-tab-pane
         v-for="(db, index) in dbs"
@@ -51,15 +51,21 @@ export default class Home extends Vue {
   }
 
   created() {
-    dbs().then((res) => {
-      this.dbs = res.data
-      if (res.data.length) {
-        this.showTab = res.data[0]
-      }
-    })
+    dbs()
+      .then((res) => {
+        this.dbs = res.data
+        if (res.data.length) {
+          this.showTab = res.data[0]
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to load databases:', error)
+      })
   }
-  handleClick() {
-    // todo
+
+  handleClick(tab: { name: string }) {
+    // Handle tab click if needed in the future
+    console.log('Switched to tab:', tab.name)
   }
 }
 </script>

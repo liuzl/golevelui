@@ -1,5 +1,6 @@
 import http from './http'
 
+// Use dynamic axios types to avoid conflicts with existing usage
 export function dbs() {
   return http.get('/golevelui/api/dbs')
 }
