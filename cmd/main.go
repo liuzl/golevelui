@@ -71,5 +71,5 @@ func main() {
 		panic(err)
 	}
 
-	<-make(chan interface{})
+	<-make(chan any)
 }

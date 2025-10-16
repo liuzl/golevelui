@@ -8,7 +8,7 @@ import (
 func (l *LevelAdmin) apiDBs(writer http.ResponseWriter, request *http.Request) {
 	var dbsMap []string
 
-	l.dbs.Range(func(key, value interface{}) bool {
+	l.dbs.Range(func(key, value any) bool {
 		dbsMap = append(dbsMap, fmt.Sprintf("%v", key))
 
 		return true
