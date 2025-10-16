@@ -7,7 +7,7 @@ import (
 )
 
 type keyInfoRes struct {
-	Value interface{}
+	Value interface{} `json:"value"`
 }
 
 func (l *LevelAdmin) apiKeyInfo(writer http.ResponseWriter, request *http.Request) {

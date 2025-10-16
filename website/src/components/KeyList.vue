@@ -32,7 +32,7 @@
           ref="table"
           :height="tableHeight"
           :stripe="true"
-          @row-click="handleItemClick"
+          @row-click="(row) => handleItemClick(row, false)"
         >
           <el-table-column
             prop="keyName"
@@ -214,10 +214,10 @@
         return
       }
       keyInfo({db: this.db, key: row.keyName}).then(res => {
-        let formatValue = res.data.Value
+        let formatValue = res.data.value
         switch (this.format) {
           case "Json":
-            formatValue = this.formatValueToJson(res.data.Value)
+            formatValue = this.formatValueToJson(res.data.value)
             break
         }
 
@@ -233,6 +233,8 @@
             } else {
               Message.error("更新失败!")
             }
+          }).catch(err => {
+            Message.error(`更新失败: ${err}`)
           })
       } else {
         Message.info("请选择key")
