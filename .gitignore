@@ -1,0 +1,12 @@
+# IDE
+.idea
+
+# Build output
+static
+rice-box.go
+golevelui_server
+main
+
+# Local data
+testdb
+*.log
